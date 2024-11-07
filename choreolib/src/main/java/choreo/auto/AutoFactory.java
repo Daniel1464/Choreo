@@ -64,7 +64,7 @@ import java.util.function.Supplier;
  */
 public class AutoFactory {
   static final AutoRoutine VOID_ROUTINE =
-      new AutoRoutine("VOID-ROUTINE") {
+      new AutoRoutine("VOID-ROUTINE", null) {
         private final EventLoop loop = new EventLoop();
 
         @Override
@@ -88,6 +88,18 @@ public class AutoFactory {
           return new Trigger(loop, () -> false);
         }
       };
+
+  static final AutoTrajectory VOID_TRAJECTORY = new AutoTrajectory(
+    "",
+    new Trajectory<SwerveSample>("", List.of(), List.of(), List.of()),
+    Pose2d::new,
+    (pose, sample) -> {},
+    () -> false,
+    Optional.empty(),
+    new Subsystem() {},
+    VOID_ROUTINE,
+    new AutoFactory.AutoBindings()
+  );
 
   /** A class used to bind commands to events in all trajectories created by this factory. */
   public static class AutoBindings {
@@ -175,7 +187,7 @@ public class AutoFactory {
       clearCache();
     }
 
-    return new AutoRoutine(name);
+    return new AutoRoutine(name, this);
   }
 
   /**

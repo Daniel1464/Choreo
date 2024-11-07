@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -34,13 +35,17 @@ public class AutoRoutine {
   /** The amount of times the routine has been polled */
   protected int pollCount = 0;
 
+  /** The auto factory of the routine. */
+  protected final Optional<AutoFactory> autoFactory;
+
   /**
    * Creates a new loop with a specific name
    *
    * @param name The name of the loop
    * @see AutoFactory#newRoutine Creating a loop from a AutoFactory
    */
-  public AutoRoutine(String name) {
+  public AutoRoutine(String name, AutoFactory factory) {
+    this.autoFactory = Optional.ofNullable(factory);
     this.loop = new EventLoop();
     this.name = name;
   }
@@ -51,7 +56,8 @@ public class AutoRoutine {
    * @param name The name of the loop
    * @param loop The inner {@link EventLoop}
    */
-  protected AutoRoutine(String name, EventLoop loop) {
+  protected AutoRoutine(String name, EventLoop loop, AutoFactory factory) {
+    this.autoFactory = Optional.ofNullable(factory);
     this.loop = loop;
     this.name = name;
   }
@@ -116,6 +122,35 @@ public class AutoRoutine {
     reset();
     DriverStation.reportWarning("Killed An Auto Loop", true);
     isKilled = true;
+  }
+
+  /**
+   * Creates a new auto trajectory to be used in an auto routine.
+   *
+   * @param trajectoryName The name of the trajectory to use.
+   * @return A new auto trajectory.
+   */
+  public AutoTrajectory trajectory(String trajectoryName) {
+    if (this.autoFactory.isPresent()) {
+      return this.autoFactory.get().trajectory(trajectoryName, this);
+    } else {
+      return AutoFactory.VOID_TRAJECTORY;
+    }
+  }
+
+  /**
+   * Creates a new auto trajectory to be used in an auto routine.
+   *
+   * @param trajectoryName The name of the trajectory to use.
+   * @param splitIndex The index of the split trajectory to use.
+   * @return A new auto trajectory.
+   */
+  public AutoTrajectory trajectory(String trajectoryName, int splitIndex) {
+    if (this.autoFactory.isPresent()) {
+      return this.autoFactory.get().trajectory(trajectoryName, splitIndex, this);
+    } else {
+      return AutoFactory.VOID_TRAJECTORY;
+    }
   }
 
   /**
