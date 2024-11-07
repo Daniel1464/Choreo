@@ -42,6 +42,7 @@ public class AutoRoutine {
    * Creates a new loop with a specific name
    *
    * @param name The name of the loop
+   * @param factory The auto factory of the routine(can be null).
    * @see AutoFactory#newRoutine Creating a loop from a AutoFactory
    */
   public AutoRoutine(String name, AutoFactory factory) {
@@ -54,6 +55,7 @@ public class AutoRoutine {
    * A constructor to be used when inhereting this class to instantiate a custom inner loop
    *
    * @param name The name of the loop
+   * @param factory The auto factory of the routine(can be null).
    * @param loop The inner {@link EventLoop}
    */
   protected AutoRoutine(String name, EventLoop loop, AutoFactory factory) {
