@@ -2,13 +2,20 @@
 
 package choreo.auto;
 
+import choreo.Choreo;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
+import choreo.trajectory.TrajectorySample;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -36,7 +43,7 @@ public class AutoRoutine {
   protected int pollCount = 0;
 
   /** The auto factory of the routine. */
-  protected final Optional<AutoFactory> autoFactory;
+  protected final AutoFactory autoFactory;
 
   /**
    * Creates a new loop with a specific name
@@ -46,7 +53,7 @@ public class AutoRoutine {
    * @see AutoFactory#newRoutine Creating a loop from a AutoFactory
    */
   public AutoRoutine(String name, AutoFactory factory) {
-    this.autoFactory = Optional.ofNullable(factory);
+    this.autoFactory = factory;
     this.loop = new EventLoop();
     this.name = name;
   }
@@ -59,7 +66,7 @@ public class AutoRoutine {
    * @param loop The inner {@link EventLoop}
    */
   protected AutoRoutine(String name, EventLoop loop, AutoFactory factory) {
-    this.autoFactory = Optional.ofNullable(factory);
+    this.autoFactory = factory;
     this.loop = loop;
     this.name = name;
   }
@@ -133,11 +140,16 @@ public class AutoRoutine {
    * @return A new auto trajectory.
    */
   public AutoTrajectory trajectory(String trajectoryName) {
-    if (this.autoFactory.isPresent()) {
-      return this.autoFactory.get().trajectory(trajectoryName, this);
+    Optional<? extends Trajectory<?>> optTrajectory =
+            autoFactory.trajectoryCache.loadTrajectory(trajectoryName);
+    Trajectory<?> trajectory;
+    if (optTrajectory.isPresent()) {
+      trajectory = optTrajectory.get();
     } else {
-      return AutoFactory.VOID_TRAJECTORY;
+      DriverStation.reportError("Could not load trajectory: " + trajectoryName, false);
+      trajectory = new Trajectory<SwerveSample>(trajectoryName, List.of(), List.of(), List.of());
     }
+    return trajectory(trajectory);
   }
 
   /**
@@ -148,11 +160,43 @@ public class AutoRoutine {
    * @return A new auto trajectory.
    */
   public AutoTrajectory trajectory(String trajectoryName, int splitIndex) {
-    if (this.autoFactory.isPresent()) {
-      return this.autoFactory.get().trajectory(trajectoryName, splitIndex, this);
+    Optional<? extends Trajectory<?>> optTrajectory =
+            autoFactory.trajectoryCache.loadTrajectory(trajectoryName, splitIndex);
+    Trajectory<?> trajectory;
+    if (optTrajectory.isPresent()) {
+      trajectory = optTrajectory.get();
     } else {
-      return AutoFactory.VOID_TRAJECTORY;
+      DriverStation.reportError("Could not load trajectory: " + trajectoryName, false);
+      trajectory = new Trajectory<SwerveSample>(trajectoryName, List.of(), List.of(), List.of());
     }
+    return trajectory(trajectory);
+  }
+
+  /**
+   * Creates a new auto trajectory to be used in an auto routine.
+   *
+   * @param <SampleType> The type of the trajectory samples.
+   * @param trajectory The trajectory to use.
+   * @return A new auto trajectory.
+   */
+  @SuppressWarnings("unchecked")
+  public <SampleType extends TrajectorySample<SampleType>> AutoTrajectory trajectory(
+          Trajectory<SampleType> trajectory) {
+    // type solidify everything
+    final BiConsumer<Pose2d, SampleType> solidController =
+        (BiConsumer<Pose2d, SampleType>) autoFactory.controller;
+    final Optional<Choreo.TrajectoryLogger<SampleType>> solidLogger =
+        autoFactory.trajectoryLogger.map(logger -> (Choreo.TrajectoryLogger<SampleType>) logger);
+    return new AutoTrajectory(
+      trajectory.name(),
+      trajectory,
+      autoFactory.poseSupplier,
+      solidController,
+      autoFactory.mirrorTrajectory,
+      solidLogger,
+      autoFactory.driveSubsystem,
+      this,
+      autoFactory.bindings);
   }
 
   /**

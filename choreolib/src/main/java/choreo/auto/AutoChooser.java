@@ -2,14 +2,17 @@
 
 package choreo.auto;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArrayEntry;
 import edu.wpi.first.networktables.StringEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -29,9 +32,17 @@ import java.util.function.Function;
  */
 public class AutoChooser {
   /** A function that generates an {@link AutoRoutine} from an {@link AutoFactory}. */
-  public static interface AutoRoutineGenerator extends Function<AutoFactory, AutoRoutine> {
+  public interface AutoRoutineGenerator extends Function<AutoFactory, AutoRoutine> {
+    AutoFactory VOID_FACTORY = new AutoFactory(
+      Pose2d::new,
+      (pose2d, sampleType) -> {},
+      () -> false,
+      new Subsystem() {},
+      new AutoFactory.AutoBindings(),
+      Optional.empty()
+    );
     /** A generator that returns an auto routine that does nothing */
-    static final AutoRoutineGenerator NONE = factory -> AutoFactory.VOID_ROUTINE;
+    AutoRoutineGenerator NONE = factory -> VOID_FACTORY.voidRoutine();
   }
 
   private static final String NONE_NAME = "Nothing";
