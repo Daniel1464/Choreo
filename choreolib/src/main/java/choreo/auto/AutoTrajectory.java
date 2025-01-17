@@ -144,6 +144,7 @@ public class AutoTrajectory {
     timer.restart();
     isActive = true;
     isCompleted = false;
+    routine.currentTrajectory = Optional.of(this);
     logTrajectory(true);
   }
 
@@ -392,6 +393,10 @@ public class AutoTrajectory {
    */
   public Trigger done() {
     return done(0);
+  }
+
+  public Trigger finished() {
+    return inactive().and(() -> routine.currentTrajectory.isPresent() && routine.currentTrajectory.get() == this);
   }
 
   /**
