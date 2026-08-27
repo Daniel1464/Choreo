@@ -42,7 +42,7 @@ if(PROJECT_IS_TOP_LEVEL AND BUILD_TESTING AND NOT CMAKE_CROSSCOMPILING)
     FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.14.0
+        GIT_TAG v3.15.3
         GIT_SHALLOW ON
         EXCLUDE_FROM_ALL
         SYSTEM
@@ -53,7 +53,7 @@ endif()
 FetchContent_Declare(
     Sleipnir
     GIT_REPOSITORY https://github.com/SleipnirGroup/Sleipnir
-    GIT_TAG v0.5.5
+    GIT_TAG v0.6.5
     GIT_SHALLOW ON
     SYSTEM
 )
@@ -70,7 +70,7 @@ install(
     INCLUDES DESTINATION include
 )
 export(TARGETS TrajoptLib FILE TrajoptLib.cmake NAMESPACE TrajoptLib::)
-install(DIRECTORY include/ COMPONENT TrajoptLib DESTINATION "include")
+install(DIRECTORY include/ COMPONENT TrajoptLib DESTINATION include)
 install(
     EXPORT TrajoptLibTargets
     FILE TrajoptLib.cmake
@@ -82,7 +82,7 @@ install(
 configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/TrajoptLibConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/TrajoptLibConfig.cmake
-    INSTALL_DESTINATION "lib/cmake/TrajoptLib"
+    INSTALL_DESTINATION lib/cmake/TrajoptLib
     NO_SET_AND_CHECK_MACRO
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
