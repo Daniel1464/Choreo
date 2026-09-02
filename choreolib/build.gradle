@@ -5,7 +5,7 @@ plugins {
     id 'java'
     id 'google-test'
     id 'org.wpilib.WPILibRepositoriesPlugin' version '2027.0.0'
-    id 'org.wpilib.NativeUtils' version '2027.10.0'
+    id 'org.wpilib.NativeUtils' version '2027.13.1'
     id 'org.wpilib.GradleJni' version '2027.0.0'
     id 'org.wpilib.GradleVsCode' version '2027.0.0'
     id 'com.diffplug.spotless' version '8.4.0'
@@ -24,11 +24,7 @@ if (project.hasProperty('releaseMode')) {
     wpilibRepositories.addAllDevelopmentRepositories(project)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
-}
-var javaVersion = "25"
+var javaVersion = 25
 
 // Apply C++ configuration
 apply from: 'config.gradle'
@@ -78,6 +74,7 @@ if (project.hasProperty('onlylinuxarm64') || project.hasProperty('onlywindowsarm
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
     options.encoding = 'UTF-8'
+    options.release = javaVersion
 }
 
 // Setup Javadocs to link back to WPILib docs
