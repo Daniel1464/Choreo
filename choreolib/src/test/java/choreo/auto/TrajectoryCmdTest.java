@@ -26,7 +26,7 @@ public class TrajectoryCmdTest {
 
   @Test
   public void testExecution() {
-    assert HAL.initialize(500, 0);
+    assert HAL.initialize();
     Scheduler scheduler = Scheduler.createIndependentScheduler();
     AtomicReference<Pose2d> pose = new AtomicReference<>(new Pose2d());
     AutoFactory factory = AutoTestHelper.factory(scheduler, false, pose);

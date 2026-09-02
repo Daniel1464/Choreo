@@ -18,9 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 import java.util.function.BiConsumer;
-import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.system.Filesystem;
+import org.wpilib.util.Alert.Level;
 
 /** Utilities to load and follow Choreo Trajectories */
 public final class Choreo {

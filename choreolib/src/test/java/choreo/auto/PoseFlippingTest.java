@@ -45,7 +45,7 @@ public class PoseFlippingTest {
 
   @Test
   void testGetEndPose() {
-    assert HAL.initialize(500, 0);
+    assert HAL.initialize();
     Scheduler scheduler = Scheduler.createIndependentScheduler();
     factoryFlip = AutoTestHelper.factory(scheduler, true);
     factoryNoFlip = AutoTestHelper.factory(scheduler, false);

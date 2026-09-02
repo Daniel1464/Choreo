@@ -20,12 +20,12 @@ import java.util.function.Supplier;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.command3.Trigger;
-import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.system.Timer;
+import org.wpilib.util.Alert.Level;
 
 /**
  * A class that represents a trajectory that can be used in an autonomous routine and have triggers
