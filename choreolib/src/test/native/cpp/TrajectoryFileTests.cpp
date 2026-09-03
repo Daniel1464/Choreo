@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 #include <wpi/util/json.hpp>
 
 #include "choreo/trajectory/SwerveSample.hpp"
@@ -106,14 +106,12 @@ const Trajectory<SwerveSample> correctSwerveTrajectory{
     {0},
     {{0_s, "testEvent"}}};
 
-TEST(TrajectoryFileTest, DeserializeSwerveTrajectory) {
+TEST_CASE("TrajectoryFileTest DeserializeSwerveTrajectory", "[choreolib]") {
   try {
     Trajectory<SwerveSample> deserializedSwerveTrajectory =
         swerveTrajectoryJson.get<Trajectory<SwerveSample>>();
-    ASSERT_EQ(correctSwerveTrajectory, deserializedSwerveTrajectory);
+    REQUIRE(correctSwerveTrajectory == deserializedSwerveTrajectory);
   } catch (std::exception& e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    FAIL();
+    FAIL(e.what());
   }
-  SUCCEED();
 }
