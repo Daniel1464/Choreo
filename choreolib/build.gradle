@@ -12,12 +12,11 @@ plugins {
 }
 
 // WPILib Version
-ext.wpilibVersion = "2027.+"
+ext.wpilibVersion = "2027.0.0-alpha-7+"
 
 repositories {
     mavenCentral()
 }
-wpilibRepositories.use2027Repos()
 if (project.hasProperty('releaseMode')) {
     wpilibRepositories.addAllReleaseRepositories(project)
 } else {
@@ -39,7 +38,7 @@ dependencies {
     implementation "org.wpilib.wpimath:wpimath-java:$wpilibVersion"
     implementation "org.wpilib.wpiunits:wpiunits-java:$wpilibVersion"
     implementation "org.wpilib.wpiutil:wpiutil-java:$wpilibVersion"
-    implementation "org.wpilib:commands3-java:$wpilibVersion"
+    implementation "org.wpilib:commandsv3-java:$wpilibVersion"
 
     // This is needed to use wpilibj Filesystem class
     testImplementation "org.wpilib.cscore:cscore-java:$wpilibVersion"
